@@ -102,9 +102,9 @@ export default function Home() {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                         </div>
-                        <h3 className="text-2xl font-bold mb-3">Smart Rankings</h3>
+                        <h3 className="text-2xl font-bold mb-3">Organize Your Research</h3>
                         <p className="text-gray-400 leading-relaxed">
-                            Schools automatically rank based on your priorities. See your top choice at a glance with composite scores.
+                            You do the research — we help you organize it. Input your own ratings from campus visits, school websites, and trusted sources into an unbiased framework that ranks schools based solely on your priorities.
                         </p>
                     </div>
                 </div>

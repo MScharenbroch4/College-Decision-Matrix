@@ -1,8 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { School, Category, CostData } from '@/lib/types';
 import { calculateCompositeScore, calculateNetPrice, netPriceToRating } from '@/lib/calculations';
+import OnboardingModal from '@/components/OnboardingModal';
+import InfoTooltip from '@/components/InfoTooltip';
+import { ONBOARDING_CONTENT, TOOLTIP_CONTENT } from '@/lib/onboardingContent';
 
 interface DecisionStepProps {
     schools: School[];
@@ -26,6 +29,9 @@ export default function DecisionStep({
     onBack,
 }: DecisionStepProps) {
     const [activeTab, setActiveTab] = useState<'matrix' | 'cost'>('matrix');
+    const [showOnboarding, setShowOnboarding] = useState(true); // Show every time
+
+    // No localStorage check - popup shows every visit to this page
 
     const setRating = (schoolId: string, categoryId: string, rating: number) => {
         const newRatings = {
@@ -77,8 +83,26 @@ export default function DecisionStep({
 
     return (
         <div className="max-w-7xl mx-auto">
+            {/* Onboarding Modal */}
+            <OnboardingModal
+                isOpen={showOnboarding}
+                onClose={() => setShowOnboarding(false)}
+            />
+
             <div className="flex items-center justify-between mb-6">
-                <h2 className="text-3xl font-bold">College Decision Matrix</h2>
+                <div className="flex items-center gap-3">
+                    <h2 className="text-3xl font-bold">College Decision Matrix</h2>
+                    <button
+                        onClick={() => setShowOnboarding(true)}
+                        className="text-gray-400 hover:text-white transition-colors"
+                        aria-label="Show help"
+                        title="How to use this page"
+                    >
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </button>
+                </div>
                 <button onClick={handlePrint} className="btn-secondary flex items-center gap-2">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
@@ -112,9 +136,10 @@ export default function DecisionStep({
             {/* Decision Matrix Tab */}
             {activeTab === 'matrix' && (
                 <div className="space-y-6">
-                    <div className="bg-blue-900/20 border border-blue-500/50 rounded-lg p-4">
+                    <div className="bg-blue-900/20 border border-blue-500/50 rounded-lg p-4 flex items-start gap-3">
+                        <InfoTooltip content={TOOLTIP_CONTENT.rating} />
                         <p className="text-sm text-blue-200">
-                            <strong>Note:</strong> Rate each school on each category from 0-10. For Net Price, manually assign a 0-10 rating based on cost data from the Cost Analysis tab. Schools are auto-sorted by composite score.
+                            <strong>Rate each school from 0-10</strong> in each category. For Net Price, use cost data from the Cost Analysis tab to inform your rating. Schools are automatically ranked by composite score.
                         </p>
                     </div>
 
@@ -122,16 +147,32 @@ export default function DecisionStep({
                         <table className="w-full border-collapse">
                             <thead>
                                 <tr className="bg-gray-900">
-                                    <th className="border border-gray-700 px-4 py-3 text-left font-semibold">RANK</th>
+                                    <th className="border border-gray-700 px-4 py-3 text-left font-semibold">
+                                        <div className="flex items-center gap-2">
+                                            RANK
+                                            <InfoTooltip content={TOOLTIP_CONTENT.rank} />
+                                        </div>
+                                    </th>
                                     <th className="border border-gray-700 px-4 py-3 text-left font-semibold">SCHOOL</th>
-                                    {categories.map(category => (
-                                        <th key={category.id} className="border border-gray-700 px-4 py-3 text-center font-semibold">
-                                            <div>{category.name.toUpperCase()}</div>
-                                            <div className="text-xs text-accent-green">({weights[category.id]?.toFixed(1) || 0}%)</div>
-                                        </th>
-                                    ))}
+                                    {categories.map(category => {
+                                        const isNetPrice = category.id === 'net-price';
+                                        return (
+                                            <th key={category.id} className="border border-gray-700 px-4 py-3 text-center font-semibold">
+                                                <div className="flex items-center justify-center gap-1">
+                                                    <span>{category.name.toUpperCase()}</span>
+                                                    <InfoTooltip
+                                                        content={isNetPrice ? TOOLTIP_CONTENT.netPrice : TOOLTIP_CONTENT.weight}
+                                                    />
+                                                </div>
+                                                <div className="text-xs text-accent-green">({weights[category.id]?.toFixed(1) || 0}%)</div>
+                                            </th>
+                                        );
+                                    })}
                                     <th className="border border-gray-700 px-4 py-3 text-center font-semibold bg-primary/20">
-                                        COMPOSITE<br />SCORE
+                                        <div className="flex items-center justify-center gap-1">
+                                            <span>COMPOSITE<br />SCORE</span>
+                                            <InfoTooltip content={TOOLTIP_CONTENT.compositeScore} />
+                                        </div>
                                     </th>
                                 </tr>
                             </thead>
