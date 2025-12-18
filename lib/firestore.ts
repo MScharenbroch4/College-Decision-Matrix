@@ -72,7 +72,20 @@ export async function saveUserData(
     userId: string,
     data: Partial<Omit<UserData, 'userId' | 'createdAt' | 'updatedAt'>>
 ): Promise<void> {
-    console.log('💾 Attempting to save user data...', { userId, categoriesCount: data.categories?.length });
+    // Log exactly what we're trying to save
+    const categoryNames = data.categories?.map(c => c.name) || [];
+    console.log('💾 Saving to Firestore:', {
+        userId,
+        categoriesCount: data.categories?.length,
+        categoryNames,
+        schoolsCount: data.schools?.length,
+    });
+
+    // Safety check: refuse to save if categories is empty (would overwrite good data)
+    if (data.categories && data.categories.length === 0) {
+        console.error('🛑 REFUSING TO SAVE: categories array is empty! This would erase user data.');
+        return;
+    }
 
     try {
         const userRef = doc(db, 'users', userId);

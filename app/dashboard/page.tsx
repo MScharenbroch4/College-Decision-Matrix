@@ -48,7 +48,7 @@ export default function DashboardPage() {
     } = useStore();
 
     useEffect(() => {
-        console.log('Dashboard loaded - with Save Fix v2');
+        console.log('Dashboard loaded - with Save Fix v3 (empty check)');
         const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
             if (firebaseUser) {
                 setUser(firebaseUser);
@@ -93,7 +93,18 @@ export default function DashboardPage() {
         }
 
         if (user && !loading && dataLoadedRef.current) {
-            console.log('🔄 Auto-save triggered...');
+            // CRITICAL: Never save empty categories - this indicates a state sync issue
+            if (!selectedCategories || selectedCategories.length === 0) {
+                console.warn('⚠️ Auto-save BLOCKED: selectedCategories is empty, refusing to overwrite data');
+                return;
+            }
+
+            console.log('🔄 Auto-save triggered with:', {
+                categoriesCount: selectedCategories.length,
+                categoryNames: selectedCategories.map(c => c.name),
+                schoolsCount: schools.length,
+            });
+
             debouncedSave(user.uid, {
                 email: user.email || '',
                 isPremium,
