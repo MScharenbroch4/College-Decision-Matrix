@@ -44,6 +44,7 @@ export default function DashboardPage() {
     } = useStore();
 
     useEffect(() => {
+        console.log('Dashboard loaded - with Date Fix v1');
         const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
             if (firebaseUser) {
                 setUser(firebaseUser);
