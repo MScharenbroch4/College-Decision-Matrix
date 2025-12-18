@@ -26,8 +26,8 @@ export async function loadUserData(userId: string): Promise<UserData | null> {
                 schools: data.schools || [],
                 ratings: data.ratings || {},
                 costs: data.costs || {},
-                createdAt: data.createdAt?.toDate() || new Date(),
-                updatedAt: data.updatedAt?.toDate() || new Date(),
+                createdAt: parseDate(data.createdAt),
+                updatedAt: parseDate(data.updatedAt),
             };
         }
 
@@ -36,6 +36,15 @@ export async function loadUserData(userId: string): Promise<UserData | null> {
         console.error('Error loading user data:', error);
         return null;
     }
+}
+
+/**
+ * Helper to safely parse dates from Firestore which might be Timestamps, strings, or numbers
+ */
+function parseDate(value: any): Date {
+    if (!value) return new Date();
+    if (typeof value.toDate === 'function') return value.toDate();
+    return new Date(value);
 }
 
 /**

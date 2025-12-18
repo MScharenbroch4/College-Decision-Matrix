@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 
 export default function SignupPage() {
@@ -39,7 +39,7 @@ export default function SignupPage() {
             await setDoc(doc(db, 'users', userCredential.user.uid), {
                 email: userCredential.user.email,
                 isPremium: false,
-                createdAt: new Date().toISOString(),
+                createdAt: serverTimestamp(),
             });
 
             router.push('/dashboard');
