@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { signOut } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
+import { useStore } from '@/lib/store';
+import { saveUserData } from '@/lib/firestore';
 
 interface UserMenuProps {
     email: string;
@@ -14,9 +16,28 @@ interface UserMenuProps {
 export default function UserMenu({ email, isPremium, onEnterCode }: UserMenuProps) {
     const router = useRouter();
     const [isOpen, setIsOpen] = useState(false);
+    const store = useStore();
 
     const handleLogout = async () => {
+        // Force save before logout
+        if (store.user) {
+            try {
+                await saveUserData(store.user.uid, {
+                    email: store.user.email || '',
+                    isPremium: store.isPremium,
+                    categories: store.selectedCategories,
+                    weights: store.weights,
+                    schools: store.schools,
+                    ratings: store.ratings,
+                    costs: store.costs,
+                });
+            } catch (error) {
+                console.error('Error saving data on logout:', error);
+            }
+        }
+
         await signOut(auth);
+        store.resetData(); // Clear local store
         router.push('/');
     };
 

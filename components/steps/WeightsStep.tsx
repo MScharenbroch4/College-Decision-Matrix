@@ -20,7 +20,8 @@ export default function WeightsStep({ categories, weights, onWeightsChange, onNe
     }, [weights]);
 
     const totalWeight = getTotalWeight(localWeights);
-    const isValid = Math.abs(totalWeight - 100) < 0.01;
+    // Allow a small margin of error for floating point math (99.9 - 100.1 is valid)
+    const isValid = Math.abs(totalWeight - 100) < 0.2;
 
     const handleSliderChange = (categoryId: string, value: number) => {
         const newWeights = { ...localWeights, [categoryId]: value };
@@ -29,7 +30,18 @@ export default function WeightsStep({ categories, weights, onWeightsChange, onNe
     };
 
     const handleInputChange = (categoryId: string, value: string) => {
-        const numValue = parseFloat(value) || 0;
+        // Allow empty string to clear the input
+        if (value === '') {
+            const newWeights = { ...localWeights, [categoryId]: 0 };
+            setLocalWeights(newWeights);
+            onWeightsChange(newWeights);
+            return;
+        }
+
+        const numValue = parseFloat(value);
+        if (isNaN(numValue)) return;
+
+        // Clamp between 0 and 100
         const clampedValue = Math.max(0, Math.min(100, numValue));
         const newWeights = { ...localWeights, [categoryId]: clampedValue };
         setLocalWeights(newWeights);
@@ -63,10 +75,10 @@ export default function WeightsStep({ categories, weights, onWeightsChange, onNe
             <div className="space-y-6 mb-8">
                 {categories.map(category => {
                     const weight = localWeights[category.id] || 0;
-                    const percentage = weight.toFixed(1);
+                    const displayPercentage = weight.toFixed(1);
 
                     return (
-                        <div key={category.id} className="card">
+                        <div key={category.id} className="card card-glow">
                             <div className="flex items-center justify-between mb-4">
                                 <div className="flex-1">
                                     <h3 className="font-semibold text-lg">{category.name}</h3>
@@ -78,7 +90,7 @@ export default function WeightsStep({ categories, weights, onWeightsChange, onNe
                                         color: weight > 0 ? '#22c55e' : '#6b7280',
                                     }}
                                 >
-                                    {percentage}%
+                                    {displayPercentage}%
                                 </div>
                             </div>
 
@@ -100,9 +112,10 @@ export default function WeightsStep({ categories, weights, onWeightsChange, onNe
                                     min="0"
                                     max="100"
                                     step="0.1"
-                                    value={percentage}
+                                    value={weight || ''}
                                     onChange={(e) => handleInputChange(category.id, e.target.value)}
                                     className="w-24 bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-center focus:outline-none focus:border-primary"
+                                    placeholder="0"
                                 />
                             </div>
                         </div>
