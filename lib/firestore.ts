@@ -12,12 +12,22 @@ import { UserData, Category, School, CostData } from './types';
  * Load user data from Firestore
  */
 export async function loadUserData(userId: string): Promise<UserData | null> {
+    console.log('📥 Loading user data for:', userId);
+
     try {
         const userDoc = await getDoc(doc(db, 'users', userId));
 
         if (userDoc.exists()) {
             const data = userDoc.data();
-            return {
+            console.log('📦 Raw data from Firestore:', {
+                hasCategories: !!data.categories,
+                categoriesLength: data.categories?.length || 0,
+                hasWeights: !!data.weights,
+                hasSchools: !!data.schools,
+                schoolsLength: data.schools?.length || 0,
+            });
+
+            const result = {
                 userId,
                 email: data.email || '',
                 isPremium: data.isPremium || false,
@@ -29,11 +39,19 @@ export async function loadUserData(userId: string): Promise<UserData | null> {
                 createdAt: parseDate(data.createdAt),
                 updatedAt: parseDate(data.updatedAt),
             };
+
+            console.log('✅ Loaded user data:', {
+                categoriesCount: result.categories.length,
+                schoolsCount: result.schools.length,
+            });
+
+            return result;
         }
 
+        console.log('⚠️ No user document found in Firestore');
         return null;
-    } catch (error) {
-        console.error('Error loading user data:', error);
+    } catch (error: any) {
+        console.error('❌ Error loading user data:', error.code, error.message);
         return null;
     }
 }
@@ -54,6 +72,8 @@ export async function saveUserData(
     userId: string,
     data: Partial<Omit<UserData, 'userId' | 'createdAt' | 'updatedAt'>>
 ): Promise<void> {
+    console.log('💾 Attempting to save user data...', { userId, categoriesCount: data.categories?.length });
+
     try {
         const userRef = doc(db, 'users', userId);
         const userDoc = await getDoc(userRef);
@@ -63,15 +83,17 @@ export async function saveUserData(
                 ...data,
                 updatedAt: serverTimestamp(),
             });
+            console.log('✅ User data updated successfully');
         } else {
             await setDoc(userRef, {
                 ...data,
                 createdAt: serverTimestamp(),
                 updatedAt: serverTimestamp(),
             });
+            console.log('✅ User data created successfully');
         }
-    } catch (error) {
-        console.error('Error saving user data:', error);
+    } catch (error: any) {
+        console.error('❌ Error saving user data:', error.code, error.message);
         throw error;
     }
 }
@@ -106,7 +128,11 @@ export function debouncedSave(
         clearTimeout(saveTimeout);
     }
 
-    saveTimeout = setTimeout(() => {
-        saveUserData(userId, data);
+    saveTimeout = setTimeout(async () => {
+        try {
+            await saveUserData(userId, data);
+        } catch (error: any) {
+            console.error('❌ Debounced save failed:', error.code, error.message);
+        }
     }, delay);
 }

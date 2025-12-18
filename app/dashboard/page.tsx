@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { onAuthStateChanged } from 'firebase/auth';
@@ -24,6 +24,10 @@ export default function DashboardPage() {
     const [showUpgradeModal, setShowUpgradeModal] = useState(false);
     const [userId, setUserId] = useState<string>('');
 
+    // Track if initial data load is complete to prevent race conditions
+    const dataLoadedRef = useRef(false);
+    const isFirstRenderRef = useRef(true);
+
     const {
         user,
         setUser,
@@ -44,7 +48,7 @@ export default function DashboardPage() {
     } = useStore();
 
     useEffect(() => {
-        console.log('Dashboard loaded - with Date Fix v1');
+        console.log('Dashboard loaded - with Save Fix v2');
         const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
             if (firebaseUser) {
                 setUser(firebaseUser);
@@ -65,6 +69,12 @@ export default function DashboardPage() {
                     setSelectedCategories([DEFAULT_CATEGORIES[0]]);
                 }
 
+                // Mark that initial data has loaded - give React time to batch state updates
+                setTimeout(() => {
+                    dataLoadedRef.current = true;
+                    console.log('✅ Data loaded, auto-save now enabled');
+                }, 100);
+
                 setLoading(false);
             } else {
                 router.push('/login');
@@ -74,9 +84,16 @@ export default function DashboardPage() {
         return () => unsubscribe();
     }, [router, setUser, setIsPremium, setSelectedCategories, setWeights, setSchools, setRatings, setCosts]);
 
-    // Auto-save whenever data changes
+    // Auto-save whenever data changes (but only after initial load)
     useEffect(() => {
-        if (user && !loading) {
+        // Skip the first render and any renders before data is loaded
+        if (isFirstRenderRef.current) {
+            isFirstRenderRef.current = false;
+            return;
+        }
+
+        if (user && !loading && dataLoadedRef.current) {
+            console.log('🔄 Auto-save triggered...');
             debouncedSave(user.uid, {
                 email: user.email || '',
                 isPremium,
