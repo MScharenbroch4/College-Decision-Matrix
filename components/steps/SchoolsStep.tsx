@@ -86,9 +86,9 @@ export default function SchoolsStep({
     };
 
     return (
-        <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl font-bold mb-2">Select Schools to Compare</h2>
-            <p className="text-gray-400 mb-8">
+        <div className="max-w-4xl mx-auto px-4 sm:px-0">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-2">Select Schools to Compare</h2>
+            <p className="text-sm sm:text-base text-gray-400 mb-6 sm:mb-8">
                 Choose up to {maxSchools} colleges you're considering. Search from Division I schools or add your own.
             </p>
 
@@ -260,14 +260,14 @@ export default function SchoolsStep({
                 </div>
             )}
 
-            <div className="flex justify-between items-center">
-                <button onClick={onBack} className="btn-secondary">
+            <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3">
+                <button onClick={onBack} className="btn-secondary w-full sm:w-auto">
                     ← Back
                 </button>
                 <button
                     onClick={onNext}
                     disabled={schools.length === 0}
-                    className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed hover-glow-green"
+                    className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed hover-glow-green w-full sm:w-auto"
                 >
                     Continue to Decision Matrix →
                 </button>

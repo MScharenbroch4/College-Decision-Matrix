@@ -12,6 +12,7 @@ export default function InfoTooltip({ content, className = '' }: InfoTooltipProp
     const [isVisible, setIsVisible] = useState(false);
     const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
     const buttonRef = useRef<HTMLButtonElement>(null);
+    const tooltipRef = useRef<HTMLDivElement>(null);
     const [mounted, setMounted] = useState(false);
 
     // Only render portal after mounting (client-side only)
@@ -47,11 +48,49 @@ export default function InfoTooltip({ content, className = '' }: InfoTooltipProp
         }
     }, [isVisible]);
 
+    // Handle click outside to dismiss (for mobile)
+    useEffect(() => {
+        if (!isVisible) return;
+
+        const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+            const target = event.target as Node;
+
+            // Don't close if clicking the button itself
+            if (buttonRef.current?.contains(target)) return;
+
+            // Don't close if clicking inside the tooltip
+            if (tooltipRef.current?.contains(target)) return;
+
+            setIsVisible(false);
+        };
+
+        // Add listeners with a small delay to avoid immediate closing
+        const timeoutId = setTimeout(() => {
+            document.addEventListener('mousedown', handleClickOutside);
+            document.addEventListener('touchstart', handleClickOutside);
+        }, 10);
+
+        return () => {
+            clearTimeout(timeoutId);
+            document.removeEventListener('mousedown', handleClickOutside);
+            document.removeEventListener('touchstart', handleClickOutside);
+        };
+    }, [isVisible]);
+
+    // Toggle for click/tap (mobile-friendly)
+    const handleClick = (e: React.MouseEvent | React.TouchEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsVisible(!isVisible);
+    };
+
+    // Hover handlers (desktop)
     const handleMouseEnter = () => setIsVisible(true);
     const handleMouseLeave = () => setIsVisible(false);
 
     const tooltip = isVisible && mounted ? createPortal(
         <div
+            ref={tooltipRef}
             className="fixed z-[9999] w-64 p-3 bg-gray-800 border border-gray-600 rounded-lg shadow-2xl text-sm text-gray-200 leading-relaxed"
             style={{
                 top: tooltipPosition.top,
@@ -72,12 +111,14 @@ export default function InfoTooltip({ content, className = '' }: InfoTooltipProp
             <button
                 ref={buttonRef}
                 type="button"
+                onClick={handleClick}
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
                 onFocus={handleMouseEnter}
                 onBlur={handleMouseLeave}
                 className={`w-5 h-5 rounded-full bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white flex items-center justify-center text-xs font-bold transition-colors cursor-help ${className}`}
                 aria-label="More information"
+                aria-expanded={isVisible}
             >
                 ?
             </button>

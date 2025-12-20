@@ -66,9 +66,9 @@ export default function WeightsStep({ categories, weights, onWeightsChange, onNe
     };
 
     return (
-        <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl font-bold mb-2">Assign Category Weights</h2>
-            <p className="text-gray-400 mb-8">
+        <div className="max-w-4xl mx-auto px-4 sm:px-0">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-2">Assign Category Weights</h2>
+            <p className="text-sm sm:text-base text-gray-400 mb-6 sm:mb-8">
                 Distribute 100% across your selected categories based on their importance to your decision. Use the sliders or type exact values.
             </p>
 
@@ -152,19 +152,19 @@ export default function WeightsStep({ categories, weights, onWeightsChange, onNe
                 )}
             </div>
 
-            <div className="flex justify-between items-center">
-                <div className="flex gap-3">
-                    <button onClick={onBack} className="btn-secondary">
+            <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 mt-6">
+                <div className="flex flex-col xs:flex-row gap-2 sm:gap-3">
+                    <button onClick={onBack} className="btn-secondary flex-1 xs:flex-initial">
                         ← Back
                     </button>
-                    <button onClick={distributeEvenly} className="btn-secondary">
+                    <button onClick={distributeEvenly} className="btn-secondary flex-1 xs:flex-initial">
                         Distribute Evenly
                     </button>
                 </div>
                 <button
                     onClick={onNext}
                     disabled={!isValid}
-                    className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed hover-glow-green"
+                    className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed hover-glow-green w-full sm:w-auto"
                 >
                     Continue to Schools →
                 </button>

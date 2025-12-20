@@ -48,9 +48,9 @@ export default function CategoriesStep({ selectedCategories, onCategoriesChange,
     const canProceed = selectedCategories.some(c => c.id === 'net-price');
 
     return (
-        <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl font-bold mb-2">Select Your Decision Criteria</h2>
-            <p className="text-gray-400 mb-8">
+        <div className="max-w-4xl mx-auto px-4 sm:px-0">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-2">Select Your Decision Criteria</h2>
+            <p className="text-sm sm:text-base text-gray-400 mb-6 sm:mb-8">
                 Choose the factors that matter most to you when comparing colleges. Net Price is mandatory and will be calculated from your cost breakdown.
             </p>
 
@@ -167,14 +167,14 @@ export default function CategoriesStep({ selectedCategories, onCategoriesChange,
                 )}
             </div>
 
-            <div className="flex justify-between items-center mt-8">
-                <div className="text-gray-400">
+            <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 mt-6 sm:mt-8">
+                <div className="text-gray-400 text-center sm:text-left">
                     {selectedCategories.length} {selectedCategories.length === 1 ? 'category' : 'categories'} selected
                 </div>
                 <button
                     onClick={onNext}
                     disabled={!canProceed}
-                    className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed hover-glow-green"
+                    className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed hover-glow-green w-full sm:w-auto"
                 >
                     Continue to Weights →
                 </button>

@@ -20,46 +20,47 @@ export default function Home() {
             </div>
 
             {/* Header */}
-            <nav className="relative z-10 px-6 py-4 flex items-center justify-between">
-                <Link href="/" className="flex items-center gap-3">
+            <nav className="relative z-10 px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
+                <Link href="/" className="flex items-center gap-2 sm:gap-3">
                     <Image
                         src="/logo.png"
                         alt="College Decision Matrix Logo"
-                        width={50}
-                        height={50}
-                        className="rounded-lg"
+                        width={40}
+                        height={40}
+                        className="rounded-lg sm:w-[50px] sm:h-[50px]"
                     />
-                    <span className="text-xl font-bold text-accent-green">College Decision Matrix</span>
+                    <span className="text-base sm:text-xl font-bold text-accent-green hidden xs:inline">College Decision Matrix</span>
+                    <span className="text-base font-bold text-accent-green xs:hidden">CDM</span>
                 </Link>
-                <div className="flex gap-4">
-                    <Link href="/login" className="px-6 py-2 rounded-lg border border-gray-600 hover:border-gray-500 transition-all">
+                <div className="flex gap-2 sm:gap-4">
+                    <Link href="/login" className="px-3 sm:px-6 py-2 text-sm sm:text-base rounded-lg border border-gray-600 hover:border-gray-500 transition-all">
                         Log In
                     </Link>
-                    <Link href="/signup" className="px-6 py-2 rounded-lg bg-accent-green text-black font-semibold hover-glow-green transition-all">
+                    <Link href="/signup" className="px-3 sm:px-6 py-2 text-sm sm:text-base rounded-lg bg-accent-green text-black font-semibold hover-glow-green transition-all">
                         Sign Up
                     </Link>
                 </div>
             </nav>
 
             {/* Hero Section */}
-            <div className="relative z-10 max-w-6xl mx-auto px-6 py-20 md:py-32 text-center">
-                <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+            <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-20 md:py-32 text-center">
+                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-4 sm:mb-6 leading-tight">
                     Make Your College Decision<br />
                     <span className="text-accent-green">With Confidence</span>
                 </h1>
-                <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto mb-12">
+                <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-300 max-w-3xl mx-auto mb-8 sm:mb-12">
                     Compare schools using weighted metrics, cost analysis, and data-driven insights. Make the smartest choice for your future.
                 </p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
                     <Link
                         href="/signup"
-                        className="px-8 py-4 rounded-lg bg-accent-green text-black text-lg font-semibold glow-green hover-glow-green transition-all"
+                        className="px-6 sm:px-8 py-3 sm:py-4 rounded-lg bg-accent-green text-black text-base sm:text-lg font-semibold glow-green hover-glow-green transition-all"
                     >
                         Get Started Free
                     </Link>
                     <Link
                         href="/login"
-                        className="px-8 py-4 rounded-lg border border-gray-600 text-lg font-semibold hover:border-accent-green transition-all"
+                        className="px-6 sm:px-8 py-3 sm:py-4 rounded-lg border border-gray-600 text-base sm:text-lg font-semibold hover:border-accent-green transition-all"
                     >
                         Log In
                     </Link>

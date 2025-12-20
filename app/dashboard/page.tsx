@@ -142,18 +142,18 @@ export default function DashboardPage() {
         <div className="min-h-screen pb-16">
             {/* Header */}
             <div className="bg-gray-900 border-b border-gray-800">
-                <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
+                <div className="max-w-7xl mx-auto px-4 py-3 sm:py-4 flex items-center justify-between">
+                    <div className="flex items-center gap-2 sm:gap-3">
                         <Image
                             src="/logo.png"
                             alt="College Decision Matrix"
-                            width={50}
-                            height={50}
-                            className="rounded-lg"
+                            width={40}
+                            height={40}
+                            className="rounded-lg sm:w-[50px] sm:h-[50px]"
                         />
-                        <div>
-                            <h1 className="text-2xl font-bold text-accent-green">College Decision Matrix</h1>
-                            <p className="text-sm text-gray-400">Make confident college decisions</p>
+                        <div className="hidden xs:block">
+                            <h1 className="text-lg sm:text-2xl font-bold text-accent-green">College Decision Matrix</h1>
+                            <p className="text-xs sm:text-sm text-gray-400 hidden sm:block">Make confident college decisions</p>
                         </div>
                     </div>
                     <UserMenu

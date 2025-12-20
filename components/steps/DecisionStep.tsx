@@ -82,16 +82,16 @@ export default function DecisionStep({
     };
 
     return (
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-7xl mx-auto px-4 sm:px-0">
             {/* Onboarding Modal */}
             <OnboardingModal
                 isOpen={showOnboarding}
                 onClose={() => setShowOnboarding(false)}
             />
 
-            <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-3">
-                    <h2 className="text-3xl font-bold">College Decision Matrix</h2>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 gap-3">
+                <div className="flex items-center gap-2 sm:gap-3">
+                    <h2 className="text-xl sm:text-2xl md:text-3xl font-bold">College Decision Matrix</h2>
                     <button
                         onClick={() => setShowOnboarding(true)}
                         className="text-gray-400 hover:text-white transition-colors"
@@ -339,11 +339,11 @@ export default function DecisionStep({
             )}
 
             {/* Navigation */}
-            <div className="flex justify-between items-center mt-8 pt-6 border-t border-gray-800">
-                <button onClick={onBack} className="btn-secondary">
+            <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 mt-8 pt-6 border-t border-gray-800">
+                <button onClick={onBack} className="btn-secondary w-full sm:w-auto">
                     ← Back
                 </button>
-                <div className="text-gray-400 text-sm">
+                <div className="text-gray-400 text-sm text-center sm:text-right">
                     Your progress is automatically saved
                 </div>
             </div>
